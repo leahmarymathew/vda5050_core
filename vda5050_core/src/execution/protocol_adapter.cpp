@@ -17,6 +17,7 @@
  */
 
 #include <utility>
+#include <vector>
 
 #include "vda5050_core/execution/protocol_adapter.hpp"
 

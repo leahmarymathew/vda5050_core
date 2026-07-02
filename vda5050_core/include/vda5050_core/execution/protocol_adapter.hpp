@@ -31,7 +31,6 @@
 #include <type_traits>
 #include <typeindex>
 #include <unordered_map>
-#include <vector>
 
 #include "vda5050_core/logger/logger.hpp"
 #include "vda5050_core/transport/mqtt_client_interface.hpp"

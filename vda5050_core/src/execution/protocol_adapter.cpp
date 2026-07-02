@@ -28,7 +28,8 @@ namespace execution {
 //=============================================================================
 std::shared_ptr<ProtocolAdapter> ProtocolAdapter::make(
   std::shared_ptr<transport::MqttClientInterface> mqtt_client,
-  const std::string& interface, const std::string& version,
+  const std::string& interface,
+  const vda5050_core::types::ProtocolVersion& version,
   const std::string& manufacturer, const std::string& serial_number)
 {
   auto adapter = std::shared_ptr<ProtocolAdapter>(new ProtocolAdapter(
@@ -76,7 +77,8 @@ bool ProtocolAdapter::connected()
 //=============================================================================
 ProtocolAdapter::ProtocolAdapter(
   std::shared_ptr<vda5050_core::transport::MqttClientInterface> mqtt_client,
-  const std::string& interface, const std::string& version,
+  const std::string& interface,
+  const vda5050_core::types::ProtocolVersion& version,
   const std::string& manufacturer, const std::string& serial_number)
 : mqtt_client_(std::move(mqtt_client)),
   interface_(interface),
@@ -85,7 +87,8 @@ ProtocolAdapter::ProtocolAdapter(
   serial_number_(serial_number)
 {
   std::string topic_prefix = fmt::format(
-    "{}/{}/{}/{}", interface_, version_, manufacturer_, serial_number_);
+    "{}/{}/{}/{}", interface_, version_.topic_version(), manufacturer_,
+    serial_number_);
 
   topic_names_ = {
     {std::type_index(typeid(vda5050_core::types::Connection)),

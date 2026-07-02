@@ -43,6 +43,7 @@
 #include "vda5050_core/types/header.hpp"
 #include "vda5050_core/types/instant_actions.hpp"
 #include "vda5050_core/types/order.hpp"
+#include "vda5050_core/types/protocol_version.hpp"
 #include "vda5050_core/types/state.hpp"
 #include "vda5050_core/types/visualization.hpp"
 
@@ -86,7 +87,8 @@ class ProtocolAdapter : public std::enable_shared_from_this<ProtocolAdapter>
 public:
   static std::shared_ptr<ProtocolAdapter> make(
     std::shared_ptr<transport::MqttClientInterface> mqtt_client,
-    const std::string& interface, const std::string& version,
+    const std::string& interface,
+    const vda5050_core::types::ProtocolVersion& version,
     const std::string& manufacturer, const std::string& serial_number);
 
   void connect();
@@ -109,8 +111,8 @@ public:
     try
     {
       vda5050_core::types::Header header{
-        header_ids_[type_idx]++, std::chrono::system_clock::now(), version_,
-        manufacturer_, serial_number_};
+        header_ids_[type_idx]++, std::chrono::system_clock::now(),
+        version_.to_string(), manufacturer_, serial_number_};
       message.header = header;
 
       nlohmann::json j = message;
@@ -217,20 +219,13 @@ public:
     if (mqtt_client_) mqtt_client_->unsubscribe(it->second);
   }
 
-  static std::string get_topic_version(const std::string& version)
-  {
-    // TODO(sauk2): Enforce stricter version checking before parsing string
-    auto position = version.find('.');
-    std::string major = version.substr(0, position);
-    return "v" + major;
-  }
-
   void unsubscribe_all();
 
 private:
   ProtocolAdapter(
     std::shared_ptr<transport::MqttClientInterface> mqtt_client,
-    const std::string& interface, const std::string& version,
+    const std::string& interface,
+    const vda5050_core::types::ProtocolVersion& version,
     const std::string& manufacturer, const std::string& serial_number);
 
   std::shared_ptr<transport::MqttClientInterface> mqtt_client_;
@@ -249,7 +244,7 @@ private:
   std::mutex active_flags_mutex_;
 
   std::string interface_;
-  std::string version_;
+  vda5050_core::types::ProtocolVersion version_;
   std::string manufacturer_;
   std::string serial_number_;
 };

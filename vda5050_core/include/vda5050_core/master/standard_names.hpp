@@ -21,6 +21,10 @@
 
 #include <string>
 
+#include "vda5050_core/types/protocol_version.hpp"
+
+using vda5050_core::types::ProtocolVersion;
+
 namespace vda5050_core {
 
 namespace master {
@@ -36,7 +40,7 @@ enum class QosLevel : int
   ExactlyOnce = 2,  ///< Two-phase handshake; rarely needed.
 };
 
-const std::string Version = "v2";                          // NOLINT
+const ProtocolVersion Version = ProtocolVersion::V2_0_0;  // NOLINT
 const std::string DefaultInterfaceName = "uagv";           // NOLINT
 const std::string ConnectionTopic = "connection";          // NOLINT
 const std::string FactsheetTopic = "factsheet";            // NOLINT

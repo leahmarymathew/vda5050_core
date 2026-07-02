@@ -47,8 +47,8 @@ public:
     if (version == "2.0.0") return V2_0_0;
 
     throw std::invalid_argument(
-      "ProtocolVersion::from_string: unsupported protocol version '" +
-      version + "'");
+      "ProtocolVersion::from_string: unsupported protocol version '" + version +
+      "'");
   }
 
   /// \brief All VDA5050 protocol versions supported by this library.
@@ -79,8 +79,7 @@ public:
         return "v2";
     }
 
-    throw std::logic_error(
-      "ProtocolVersion::topic_version: unhandled version");
+    throw std::logic_error("ProtocolVersion::topic_version: unhandled version");
   }
 
   bool operator==(const ProtocolVersion& other) const
@@ -99,8 +98,7 @@ private:
     V2_0_0
   };
 
-  explicit constexpr ProtocolVersion(Value value)
-  : value_(value)
+  explicit constexpr ProtocolVersion(Value value) : value_(value)
   {
     // Nothing to do here ...
   }

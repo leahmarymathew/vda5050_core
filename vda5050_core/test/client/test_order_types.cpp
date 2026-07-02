@@ -77,9 +77,8 @@ TEST(OrderTypesTest, ConfigResourceCarriesAllFields)
 // Test 4: Check if ConfigResource reports its type correctly through the base class.
 TEST(OrderTypesTest, ConfigResourceReportsItsTypeThroughBase)
 {
-  std::shared_ptr<ResourceBase> base =
-    std::make_shared<HeaderConfigResource>(
-      "uagv", types::ProtocolVersion::V2_0_0, "ROS-I", "S001");
+  std::shared_ptr<ResourceBase> base = std::make_shared<HeaderConfigResource>(
+    "uagv", types::ProtocolVersion::V2_0_0, "ROS-I", "S001");
 
   EXPECT_EQ(base->get_type(), std::type_index(typeid(HeaderConfigResource)));
 }

@@ -40,7 +40,7 @@ enum class QosLevel : int
   ExactlyOnce = 2,  ///< Two-phase handshake; rarely needed.
 };
 
-const ProtocolVersion Version = ProtocolVersion::V2_0_0;  // NOLINT
+const ProtocolVersion Version = ProtocolVersion::V2_0_0;   // NOLINT
 const std::string DefaultInterfaceName = "uagv";           // NOLINT
 const std::string ConnectionTopic = "connection";          // NOLINT
 const std::string FactsheetTopic = "factsheet";            // NOLINT

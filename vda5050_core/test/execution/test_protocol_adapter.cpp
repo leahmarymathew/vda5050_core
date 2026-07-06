@@ -48,6 +48,7 @@ using vda5050_core::types::Factsheet;
 using vda5050_core::types::InstantActions;
 using vda5050_core::types::Order;
 using vda5050_core::types::ProtocolVersion;
+using vda5050_core::types::protocol_versions::V2_0_0;
 using vda5050_core::types::State;
 using vda5050_core::types::Visualization;
 
@@ -82,7 +83,7 @@ protected:
   std::shared_ptr<ProtocolAdapter> adapter_;
 
   std::string interface_;
-  ProtocolVersion version_ = ProtocolVersion::V2_0_0;
+  ProtocolVersion version_ = V2_0_0;
   std::string manufacturer_;
   std::string serial_number_;
 
@@ -94,7 +95,7 @@ protected:
   void SetUp()
   {
     interface_ = "uagv";
-    version_ = ProtocolVersion::V2_0_0;
+    version_ = V2_0_0;
     manufacturer_ = "ROS-I";
     serial_number_ = "S001";
 
@@ -104,7 +105,7 @@ protected:
       mock_, interface_, version_, manufacturer_, serial_number_);
 
     topic_prefix_ = fmt::format(
-      "{}/{}/{}/{}/", interface_, version_.topic_version(), manufacturer_,
+      "{}/{}/{}/{}/", interface_, version_.to_topic_version(), manufacturer_,
       serial_number_);
 
     qos_ = 0;

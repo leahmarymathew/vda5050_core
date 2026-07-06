@@ -41,7 +41,7 @@ namespace types = vda5050_core::types;
 std::shared_ptr<AGVContext> make_context()
 {
   auto config = std::make_shared<vda5050_core::client::HeaderConfigResource>(
-    "uagv", types::ProtocolVersion::V2_0_0, "ROS-I", "S001");
+    "uagv", types::protocol_versions::V2_0_0, "ROS-I", "S001");
   auto context = AGVContext::make(config);
   context->init();
   return context;

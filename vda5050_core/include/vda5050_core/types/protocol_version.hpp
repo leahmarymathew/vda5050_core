@@ -20,6 +20,7 @@
 #define VDA5050_CORE__TYPES__PROTOCOL_VERSION_HPP_
 
 #include <array>
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 
@@ -37,77 +38,87 @@ namespace types {
 class ProtocolVersion
 {
 public:
-  /// \brief VDA5050 protocol version 2.0.0.
-  static const ProtocolVersion V2_0_0;
-
-  /// \brief Parses a semantic version string (e.g. "2.0.0").
-  /// \throws std::invalid_argument if `version` is not a supported version.
-  static ProtocolVersion from_string(const std::string& version)
-  {
-    if (version == "2.0.0") return V2_0_0;
-
-    throw std::invalid_argument(
-      "ProtocolVersion::from_string: unsupported protocol version '" + version +
-      "'");
-  }
-
-  /// \brief All VDA5050 protocol versions supported by this library.
-  static const std::array<ProtocolVersion, 1>& supported_versions()
-  {
-    static const std::array<ProtocolVersion, 1> versions{V2_0_0};
-    return versions;
-  }
-
-  /// \brief Full semantic version string, e.g. "2.0.0".
-  std::string to_string() const
-  {
-    switch (value_)
-    {
-      case Value::V2_0_0:
-        return "2.0.0";
-    }
-
-    throw std::logic_error("ProtocolVersion::to_string: unhandled version");
-  }
-
-  /// \brief MQTT topic version segment, e.g. "v2".
-  std::string topic_version() const
-  {
-    switch (value_)
-    {
-      case Value::V2_0_0:
-        return "v2";
-    }
-
-    throw std::logic_error("ProtocolVersion::topic_version: unhandled version");
-  }
-
-  bool operator==(const ProtocolVersion& other) const
-  {
-    return value_ == other.value_;
-  }
-
-  bool operator!=(const ProtocolVersion& other) const
-  {
-    return !(*this == other);
-  }
-
-private:
-  enum class Value
-  {
-    V2_0_0
-  };
-
-  explicit constexpr ProtocolVersion(Value value) : value_(value)
+  constexpr ProtocolVersion(uint8_t major, uint8_t minor, uint8_t patch)
+  : major_(major), minor_(minor), patch_(patch)
   {
     // Nothing to do here ...
   }
 
-  Value value_;
+  /// \brief Parses a semantic version string (e.g. "2.0.0").
+  /// \throws std::invalid_argument if `version` is not a supported version.
+  static ProtocolVersion from_string(const std::string& version);
+
+  /// \brief All VDA5050 protocol versions supported by this library.
+  static const std::array<ProtocolVersion, 1>& supported_versions();
+
+  /// \brief Full semantic version string, e.g. "2.0.0".
+  std::string to_string() const;
+
+  /// \brief MQTT topic version segment, e.g. "v2".
+  std::string to_topic_version() const;
+
+  /// \brief Equality operator
+  ///
+  /// \param other The other object to compare to
+  ///
+  /// \return is equal?
+  constexpr bool operator==(const ProtocolVersion& other) const
+  {
+    if (this->major_ != other.major_) return false;
+    if (this->minor_ != other.minor_) return false;
+    if (this->patch_ != other.patch_) return false;
+    return true;
+  }
+
+  /// \brief Inequality operator
+  ///
+  /// \param other The other object to compare to
+  ///
+  /// \return is not equal?
+  constexpr bool operator!=(const ProtocolVersion& other) const
+  {
+    return !(this->operator==(other));
+  }
+
+private:
+  uint8_t major_;
+  uint8_t minor_;
+  uint8_t patch_;
 };
 
-inline constexpr ProtocolVersion ProtocolVersion::V2_0_0{
-  ProtocolVersion::Value::V2_0_0};
+namespace protocol_versions {
+inline constexpr ProtocolVersion V2_0_0{2, 0, 0};
+inline constexpr std::array<ProtocolVersion, 1> kSupportedVersions{V2_0_0};
+}  // namespace protocol_versions
+
+inline const std::array<ProtocolVersion, 1>&
+ProtocolVersion::supported_versions()
+{
+  return protocol_versions::kSupportedVersions;
+}
+
+inline std::string ProtocolVersion::to_string() const
+{
+  return std::to_string(major_) + "." + std::to_string(minor_) + "." +
+         std::to_string(patch_);
+}
+
+inline std::string ProtocolVersion::to_topic_version() const
+{
+  return "v" + std::to_string(major_);
+}
+
+inline ProtocolVersion ProtocolVersion::from_string(const std::string& version)
+{
+  for (const auto& supported : supported_versions())
+  {
+    if (supported.to_string() == version) return supported;
+  }
+
+  throw std::invalid_argument(
+    "ProtocolVersion::from_string: unsupported protocol version '" + version +
+    "'");
+}
 
 }  // namespace types
 }  // namespace vda5050_core

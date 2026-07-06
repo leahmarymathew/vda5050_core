@@ -87,7 +87,7 @@ ProtocolAdapter::ProtocolAdapter(
   serial_number_(serial_number)
 {
   std::string topic_prefix = fmt::format(
-    "{}/{}/{}/{}", interface_, version_.topic_version(), manufacturer_,
+    "{}/{}/{}/{}", interface_, version_.to_topic_version(), manufacturer_,
     serial_number_);
 
   topic_names_ = {

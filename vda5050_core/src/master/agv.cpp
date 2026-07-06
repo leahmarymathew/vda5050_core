@@ -676,8 +676,8 @@ void AGV::publish_instant_actions(const InstantActions& actions)
 //=============================================================================
 std::string AGV::build_topic(const std::string& topic_name) const
 {
-  return interface_name_ + "/" + Version.topic_version() + "/" + manufacturer_ +
-         "/" + serial_number_ + "/" + topic_name;
+  return interface_name_ + "/" + Version.to_topic_version() + "/" +
+         manufacturer_ + "/" + serial_number_ + "/" + topic_name;
 }
 
 }  // namespace master

@@ -48,9 +48,9 @@ using vda5050_core::types::Factsheet;
 using vda5050_core::types::InstantActions;
 using vda5050_core::types::Order;
 using vda5050_core::types::ProtocolVersion;
-using vda5050_core::types::protocol_versions::V2_0_0;
 using vda5050_core::types::State;
 using vda5050_core::types::Visualization;
+using vda5050_core::types::protocol_versions::V2_0_0;
 
 using MessageTypes = testing::Types<
   Connection, Factsheet, InstantActions, Order, State, Visualization>;

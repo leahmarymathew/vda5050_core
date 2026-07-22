@@ -284,7 +284,7 @@ TYPED_TEST(ProtocolAdapterTest, SetWill)
       auto j = nlohmann::json::parse(message);
 
       EXPECT_EQ(j["headerId"], 0);
-      EXPECT_EQ(j["version"], this->version_);
+      EXPECT_EQ(j["version"], this->version_.to_string());
       EXPECT_EQ(j["manufacturer"], this->manufacturer_);
       EXPECT_EQ(j["serialNumber"], this->serial_number_);
     });

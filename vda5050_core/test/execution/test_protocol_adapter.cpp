@@ -50,7 +50,6 @@ using vda5050_core::types::Order;
 using vda5050_core::types::ProtocolVersion;
 using vda5050_core::types::State;
 using vda5050_core::types::Visualization;
-using vda5050_core::types::protocol_versions::V2_0_0;
 
 using MessageTypes = testing::Types<
   Connection, Factsheet, InstantActions, Order, State, Visualization>;
@@ -83,7 +82,7 @@ protected:
   std::shared_ptr<ProtocolAdapter> adapter_;
 
   std::string interface_;
-  ProtocolVersion version_ = V2_0_0;
+  ProtocolVersion version_ = ProtocolVersion::V2_0_0;
   std::string manufacturer_;
   std::string serial_number_;
 
@@ -95,7 +94,7 @@ protected:
   void SetUp()
   {
     interface_ = "uagv";
-    version_ = V2_0_0;
+    version_ = ProtocolVersion::V2_0_0;
     manufacturer_ = "ROS-I";
     serial_number_ = "S001";
 
@@ -269,6 +268,29 @@ TYPED_TEST(ProtocolAdapterTest, HeaderIncrement)
 
   this->adapter_->template publish<TypeParam>(msg, this->qos_, this->retained_);
   this->adapter_->template publish<TypeParam>(msg, this->qos_, this->retained_);
+}
+
+TYPED_TEST(ProtocolAdapterTest, SetWill)
+{
+  TypeParam msg = make_valid_message<TypeParam>();
+
+  EXPECT_CALL(
+    *this->mock_, set_will(
+                    testing::StartsWith(this->topic_prefix_), testing::_,
+                    this->qos_, this->retained_))
+    .WillOnce([&](
+                const std::string& /*topic*/, const std::string& message,
+                int /*qos*/, bool /*retained*/) {
+      auto j = nlohmann::json::parse(message);
+
+      EXPECT_EQ(j["headerId"], 0);
+      EXPECT_EQ(j["version"], this->version_);
+      EXPECT_EQ(j["manufacturer"], this->manufacturer_);
+      EXPECT_EQ(j["serialNumber"], this->serial_number_);
+    });
+
+  this->adapter_->template set_will<TypeParam>(
+    msg, this->qos_, this->retained_);
 }
 
 TYPED_TEST(ProtocolAdapterTest, UnsubscribeAllOnlyUnsubscribesActiveTopics)

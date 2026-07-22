@@ -21,7 +21,7 @@
 
 #include <array>
 #include <cstdint>
-#include <stdexcept>
+#include <optional>
 #include <string>
 
 namespace vda5050_core {
@@ -38,15 +38,12 @@ namespace types {
 class ProtocolVersion
 {
 public:
-  constexpr ProtocolVersion(uint8_t major, uint8_t minor, uint8_t patch)
-  : major_(major), minor_(minor), patch_(patch)
-  {
-    // Nothing to do here ...
-  }
+  static const ProtocolVersion V2_0_0;
 
   /// \brief Parses a semantic version string (e.g. "2.0.0").
-  /// \throws std::invalid_argument if `version` is not a supported version.
-  static ProtocolVersion from_string(const std::string& version);
+  /// \return the matching ProtocolVersion, or std::nullopt if `version` is
+  ///   not a supported version.
+  static std::optional<ProtocolVersion> from_string(const std::string& version);
 
   /// \brief All VDA5050 protocol versions supported by this library.
   static const std::array<ProtocolVersion, 1>& supported_versions();
@@ -80,21 +77,71 @@ public:
     return !(this->operator==(other));
   }
 
+  /// \brief Less-than operator
+  ///
+  /// \param other The other object to compare to
+  ///
+  /// \return is less than?
+  constexpr bool operator<(const ProtocolVersion& other) const
+  {
+    if (this->major_ != other.major_) return this->major_ < other.major_;
+    if (this->minor_ != other.minor_) return this->minor_ < other.minor_;
+    return this->patch_ < other.patch_;
+  }
+
+  /// \brief Less-than-or-equal operator
+  ///
+  /// \param other The other object to compare to
+  ///
+  /// \return is less than or equal?
+  constexpr bool operator<=(const ProtocolVersion& other) const
+  {
+    return !(other < *this);
+  }
+
+  /// \brief Greater-than operator
+  ///
+  /// \param other The other object to compare to
+  ///
+  /// \return is greater than?
+  constexpr bool operator>(const ProtocolVersion& other) const
+  {
+    return other < *this;
+  }
+
+  /// \brief Greater-than-or-equal operator
+  ///
+  /// \param other The other object to compare to
+  ///
+  /// \return is greater than or equal?
+  constexpr bool operator>=(const ProtocolVersion& other) const
+  {
+    return !(*this < other);
+  }
+
 private:
+  constexpr ProtocolVersion(uint8_t major, uint8_t minor, uint8_t patch)
+  : major_(major), minor_(minor), patch_(patch)
+  {
+    // Nothing to do here ...
+  }
+
+  static const std::array<ProtocolVersion, 1> kSupportedVersions_;
+
   uint8_t major_;
   uint8_t minor_;
   uint8_t patch_;
 };
 
-namespace protocol_versions {
-inline constexpr ProtocolVersion V2_0_0{2, 0, 0};
-inline constexpr std::array<ProtocolVersion, 1> kSupportedVersions{V2_0_0};
-}  // namespace protocol_versions
+inline constexpr ProtocolVersion ProtocolVersion::V2_0_0{2, 0, 0};
+
+inline constexpr std::array<ProtocolVersion, 1>
+  ProtocolVersion::kSupportedVersions_{V2_0_0};
 
 inline const std::array<ProtocolVersion, 1>&
 ProtocolVersion::supported_versions()
 {
-  return protocol_versions::kSupportedVersions;
+  return kSupportedVersions_;
 }
 
 inline std::string ProtocolVersion::to_string() const
@@ -108,16 +155,15 @@ inline std::string ProtocolVersion::to_topic_version() const
   return "v" + std::to_string(major_);
 }
 
-inline ProtocolVersion ProtocolVersion::from_string(const std::string& version)
+inline std::optional<ProtocolVersion> ProtocolVersion::from_string(
+  const std::string& version)
 {
   for (const auto& supported : supported_versions())
   {
     if (supported.to_string() == version) return supported;
   }
 
-  throw std::invalid_argument(
-    "ProtocolVersion::from_string: unsupported protocol version '" + version +
-    "'");
+  return std::nullopt;
 }
 
 }  // namespace types

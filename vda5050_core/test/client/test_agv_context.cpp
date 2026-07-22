@@ -40,7 +40,7 @@ namespace types = vda5050_core::types;
 std::shared_ptr<AGVContext> make_context()
 {
   auto config = std::make_shared<HeaderConfigResource>(
-    "uagv", types::protocol_versions::V2_0_0, "ROS-I", "S001");
+    "uagv", types::ProtocolVersion::V2_0_0, "ROS-I", "S001");
   auto context = AGVContext::make(config);
   context->init();
   return context;
@@ -60,7 +60,7 @@ TEST(AGVContextTest, SeedsHeaderConfigResource)
   auto config = context->get_resource<HeaderConfigResource>();
   ASSERT_NE(config, nullptr);
   EXPECT_EQ(config->interface_name, "uagv");
-  EXPECT_EQ(config->version, types::protocol_versions::V2_0_0);
+  EXPECT_EQ(config->version, types::ProtocolVersion::V2_0_0);
   EXPECT_EQ(config->manufacturer, "ROS-I");
   EXPECT_EQ(config->serial_number, "S001");
 }
@@ -159,7 +159,7 @@ TEST(AGVContextTest, ReturnsNullptrForUnpushedUpdate)
 TEST(AGVContextTest, InvokesChangeCallbackOnOrderUpdate)
 {
   auto config = std::make_shared<HeaderConfigResource>(
-    "uagv", types::protocol_versions::V2_0_0, "ROS-I", "S001");
+    "uagv", types::ProtocolVersion::V2_0_0, "ROS-I", "S001");
   auto context = AGVContext::make(config);
 
   std::atomic_int count = 0;
@@ -177,7 +177,7 @@ TEST(AGVContextTest, InvokesChangeCallbackOnOrderUpdate)
 TEST(AGVContextTest, MultipleUpdatesInvokeCallbackMultipleTimes)
 {
   auto config = std::make_shared<HeaderConfigResource>(
-    "uagv", types::protocol_versions::V2_0_0, "ROS-I", "S001");
+    "uagv", types::ProtocolVersion::V2_0_0, "ROS-I", "S001");
   auto context = AGVContext::make(config);
 
   std::atomic_int count = 0;

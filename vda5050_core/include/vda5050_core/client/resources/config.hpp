@@ -45,7 +45,7 @@ struct HeaderConfigResource
   /// \brief Interface name, e.g. "uagv".
   std::string interface_name;
 
-  /// \brief VDA5050 protocol version, e.g. protocol_versions::V2_0_0.
+  /// \brief VDA5050 protocol version, e.g. ProtocolVersion::V2_0_0.
   ProtocolVersion version;
 
   /// \brief Manufacturer of the AGV.

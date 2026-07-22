@@ -66,10 +66,10 @@ TEST(OrderTypesTest, OrderUpdateReportsItsTypeThroughBase)
 TEST(OrderTypesTest, ConfigResourceCarriesAllFields)
 {
   HeaderConfigResource config(
-    "uagv", types::protocol_versions::V2_0_0, "ROS-I", "S001");
+    "uagv", types::ProtocolVersion::V2_0_0, "ROS-I", "S001");
 
   EXPECT_EQ(config.interface_name, "uagv");
-  EXPECT_EQ(config.version, types::protocol_versions::V2_0_0);
+  EXPECT_EQ(config.version, types::ProtocolVersion::V2_0_0);
   EXPECT_EQ(config.manufacturer, "ROS-I");
   EXPECT_EQ(config.serial_number, "S001");
 }
@@ -78,7 +78,7 @@ TEST(OrderTypesTest, ConfigResourceCarriesAllFields)
 TEST(OrderTypesTest, ConfigResourceReportsItsTypeThroughBase)
 {
   std::shared_ptr<ResourceBase> base = std::make_shared<HeaderConfigResource>(
-    "uagv", types::protocol_versions::V2_0_0, "ROS-I", "S001");
+    "uagv", types::ProtocolVersion::V2_0_0, "ROS-I", "S001");
 
   EXPECT_EQ(base->get_type(), std::type_index(typeid(HeaderConfigResource)));
 }
